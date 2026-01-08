@@ -1,538 +1,796 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RTB Stream</title>
-    <style>
-        /* Base styling */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RTB Stream</title>
+  <style>
+    /* Base styling */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Font and body */
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            color: #333;
-            padding: 20px;
-        }
+    body { font-family: Arial, Helvetica, sans-serif; color: #333; padding: 20px; }
 
-        /* Header styling */
-        .header {
-            background-color: #005f99;
-            color: #fff;
-            text-align: center;
-            font-size: 1.75em;
-            font-weight: bold;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
+    .header {
+      background-color: #005f99;
+      color: #fff;
+      text-align: center;
+      font-size: 1.75em;
+      font-weight: bold;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
 
-        /* Button container */
-        .button-container {
-            display: flex;
-            gap: 10px;
-            padding: 10px 0;
-        }
+    .button-container { display: flex; gap: 10px; padding: 10px 0; }
 
-        /* Button styles */
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            color: #fff;
-            background-color: #005f99;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      color: #fff;
+      background-color: #005f99;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover { background-color: #004b80; }
 
-        button:hover {
-            background-color: #004b80;
-        }
+    .form-content {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-        /* Form content grid layout */
-        .form-content {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr); /* Six columns for smaller input fields */
-            gap: 10px; /* Reduced gap for tighter spacing */
-            margin-bottom: 15px;
-        }
-        
-        /* Form section styling */
-        .form-wrapper {
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        
-        .form-wrapper input[type="text"],
-        .form-wrapper input[type="number"],
-        .form-wrapper input[type="color"] {
-            width: 90%; /* Reduced width for better fit in smaller grid */
-            padding: 6px; /* Slightly smaller padding */
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 0.85em; /* Smaller font size */
-        }
-        
-        .form-wrapper.hidden {
-            display: none; /* Hide the form section when 'hidden' class is applied */
-        }
+    .form-wrapper {
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .form-wrapper.hidden { display: none; }
 
-        /* Form labels and inputs */
-        label {
-            font-size: 0.9em;
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
+    label {
+      font-size: 0.9em;
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
 
-        .form-wrapper input[type="text"],
-        .form-wrapper input[type="number"],
-        .form-wrapper input[type="color"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 0.9em;
-        }
+    .form-wrapper input[type="text"],
+    .form-wrapper input[type="number"],
+    .form-wrapper input[type="color"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 0.9em;
+    }
 
-        /* Checkbox area */
-        #dataItemsCheckboxes {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            padding: 10px 0;
-        }
+    /* Checkbox area */
+    #dataItemsCheckboxes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 10px 0;
+    }
+    #dataItemsCheckboxes div {
+      display: flex;
+      align-items: center;
+      font-size: 0.9em;
+    }
 
-        /* Checkbox styling */
-        #dataItemsCheckboxes div {
-            display: flex;
-            align-items: center;
-            font-size: 0.9em;
-        }
+    .tables-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+      padding-top: 20px;
+    }
 
-        /* Tables wrapper */
-        .tables-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-start;
-            padding-top: 20px;
-        }
+    .base-table {
+      width: 250px;
+      margin-bottom: 20px;
+      height: 500px;
+      position: relative;
+      padding: 10px;
+    }
 
-        /* Base table */
-        .base-table {
-            width: 250px;
-            margin-bottom: 20px;
-            height: 500px;
-            position: relative;
-            padding: 10px;
-        }
+    .inner-table-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.75s ease-in;
+    }
+    .inner-table-container.visible { opacity: 1; }
 
-        /* Inner table */
-        .inner-table-container {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.75s ease-in;
-        }
+    .inner-table { width: 100%; border-collapse: collapse; }
 
-        .inner-table-container.visible {
-            opacity: 1;
-        }
+    td { padding: 8px; text-align: center; font-size: 0.9em; }
 
-        /* Inner table style */
-        .inner-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    @keyframes slideDown {
+      from { transform: translateY(0); }
+      to { transform: translateY(500px); }
+    }
 
-        /* Table cell */
-        td {
-            padding: 8px;
-            text-align: center;
-            font-size: 0.9em;
-        }
+    .falling { animation: slideDown 6s linear forwards; }
 
-        /* Animation */
-        @keyframes slideDown {
-            from { transform: translateY(0); }
-            to { transform: translateY(500px); }
-        }
+	.auth-row{
+	  display:flex;
+	  gap:8px;
+	  align-items:flex-end;
+	  width: 980px;      /* room for pub + user + pass + status */
+	  max-width:100%;
+	  margin: 0 0 10px 0;
+	  flex-wrap: nowrap;
+	}
+	@media (max-width: 900px){
+	  .auth-row{ flex-wrap: wrap; }
+	}
+	
+	.auth-field{
+	  flex: 1 1 256px;          /* responsive two-up */
+	  min-width: 0;
+	}
 
-        .falling {
-            animation: slideDown 6s linear forwards;
-        }
-    </style>
+	.auth-field input{ width: 100%; }
+
+	.auth-field label{
+	  font-size: 0.85em;
+	  font-weight: 600;
+	  color: #444;
+	  margin-bottom: 4px;
+	}
+
+	.auth-field input{
+	  padding: 6px 8px;
+	  font-size: 0.85em;
+	  border-radius: 4px;
+	  border: 1px solid #ccc;
+	  background-color: #fafafa;
+	}
+
+	.auth-field input:focus{
+	  outline: none;
+	  border-color: #005f99;
+	  background-color: #fff;
+	}
+	
+	.site-row{
+	  margin: 0 0 10px 0;
+	  width: 520px;
+	  max-width: 100%;
+	}
+	.site-field label{
+	  font-size: 0.85em;
+	  font-weight: 600;
+	  color: #444;
+	  margin-bottom: 4px;
+	  display:block;
+	}
+	.site-field select{
+	  width: 100%;
+	  padding: 6px 8px;
+	  font-size: 0.85em;
+	  border-radius: 4px;
+	  border: 1px solid #ccc;
+	  background-color: #fafafa;
+	}
+	.site-field select:focus{
+	  outline:none;
+	  border-color:#005f99;
+	  background-color:#fff;
+	}
+	
+    /* Small token status label */
+    .token-status {
+      font-size: 0.85em;
+      color: #444;
+      grid-column: span 2;
+      align-self: end;
+      padding: 6px 8px;
+      border: 1px dashed #bbb;
+      border-radius: 4px;
+      background: #fafafa;
+    }
+	
+	.token-status-top {
+	  margin-top: 6px;
+	  margin-bottom: 12px;
+	  padding: 6px 10px;
+	  font-size: 0.85em;
+	  border-radius: 4px;
+	  border: 1px dashed #bbb;
+	  background: #f9f9f9;
+	  color: #333;
+	  max-width: fit-content;
+	}
+	
+	.token-status-inline{
+	  align-self: flex-end;        /* align with input bottom */
+	  margin-left: 8px;
+	  padding: 6px 10px;
+	  font-size: 0.8em;
+	  border-radius: 4px;
+	  border: 1px dashed #bbb;
+	  background: #f9f9f9;
+	  color: #333;
+	  white-space: nowrap;
+	  height: fit-content;
+	}
+	
+  </style>
 </head>
 <body>
-    <header class="header">RTB Stream by Tets</header>
-    
-    <div class="button-container">
-        <button id="toggleFormButton" onclick="toggleForm()">Hide Config</button>
-        <button type="button" onclick="initializeColumns(); fetchLiveLogs()">Fetch Data</button>
+<header class="header">RTB Stream by Tets</header>
+
+<div class="button-container">
+  <button type="button" id="authButton">Authenticate</button>
+  <button id="toggleFormButton" onclick="toggleForm()">Hide Config</button>
+  <button type="button" id="fetchDataButton">Fetch Data</button>
+  <button type="button" id="stopFetchButton" disabled>Stop Fetch</button>
+</div>
+
+<!-- Wrap auth + site selector so we can hide them together -->
+<div id="authWrapper">
+  <div class="auth-row">
+    <div class="auth-field">
+      <label for="publisherIdAuth">Publisher ID</label>
+      <input type="text" id="publisherIdAuth" placeholder="e.g. 586">
     </div>
 
-    <div class="form-wrapper" id="formWrapper">
-        <div class="form-content">
-            <div><label for="accessToken">Access Token:</label><input type="text" id="accessToken" required></div>
-            <div><label for="publisherId">Publisher ID:</label><input type="text" id="publisherId" required></div>
-            <div><label for="siteUuid">Site UUID:</label><input type="text" id="siteUuid" required></div>
-            <div><label for="numColumns">Base Columns:</label><input type="number" id="numColumns" value="3" min="1"></div>
-            <div><label for="minPriceColor">Low Price Color:</label><input type="color" id="minPriceColor" value="#ffffff"></div>
-            <div><label for="maxPriceColor">High Price Color:</label><input type="color" id="maxPriceColor" value="#ffffff"></div>
-            <div><label for="minFontColor">Low Price Font Color:</label><input type="color" id="minFontColor" value="#333333"></div>
-            <div><label for="maxFontColor">High Price Font Color:</label><input type="color" id="maxFontColor" value="#ffffff"></div>
-            <div><label for="minFontSize">Min Font Size:</label><input type="number" id="minFontSize" value="8" min="1"></div>
-            <div><label for="maxFontSize">Max Font Size:</label><input type="number" id="maxFontSize" value="24" min="1"></div>
-            <div><label for="minTableWidth">Min Table Width:</label><input type="number" id="minTableWidth" value="6" min="1"></div>
-            <div><label for="maxTableWidth">Max Table Width:</label><input type="number" id="maxTableWidth" value="120" min="1"></div>
-            <div><label for="minPrice">Min Price/s:</label><input type="number" id="minPrice" value="0" min="0"></div>
-            <div><label for="maxPrice">Max Price/s:</label><input type="number" id="maxPrice" value="3" min="1"></div>
-            <div><label for="fallSpeed">Fall Speed (seconds):</label><input type="number" id="fallSpeed" value="6" min="1" step="0.1"></div>
-            <div><label for="fallLength">Fall Length (pixels):</label><input type="number" id="fallLength" value="500" min="100" step="10"></div>
-            <div><label for="minVideoSize">Min Video Size:</label><input type="number" id="minVideoSize" value="12" min="1"></div>
-            <div><label for="maxVideoSize">Max Video Size:</label><input type="number" id="maxVideoSize" value="48" min="1"></div>
-            <div>
-                <label for="circularMode">Circular Mode:</label>
-                <input type="checkbox" id="circularMode" checked>
-            </div>
-            <!-- Data item selection checkboxes -->
-            <div>
-                <label>Select Data Items:</label>
-                <div id="dataItemsCheckboxes">
-                    <!-- Checkboxes will be generated here by JavaScript -->
-                </div>
-            </div>
-        </div>
+    <div class="auth-field">
+      <label for="authUsername">Username</label>
+      <input type="text" id="authUsername" placeholder="email@example.com">
     </div>
 
-    <div class="tables-wrapper" id="tablesWrapper">
-        <!-- Table columns will be dynamically added here -->
+    <div class="auth-field">
+      <label for="authPassword">Password</label>
+      <input type="password" id="authPassword" placeholder="••••••••">
     </div>
 
-    <script>
-        const processedUUIDs = new Map();
-        const MAX_PROCESSED_UUIDS = 10000; // Maximum number of UUIDs to retain in memory
+    <div class="token-status-inline" id="tokenStatus">
+      Token: (not authenticated)
+    </div>
+  </div>
 
-        document.addEventListener("DOMContentLoaded", function() {
-            const dataItems = ['DemandSource', 'BidderName', 'Category', 'AdDuration', 'Price', 'CpmPerSecond', 'IsBidSaver', 'Adomain', 'MediaFileURLs', 'Favicon'];
-            const defaultSelectedItems = ['MediaFileURLs'];
-            const checkboxContainer = document.getElementById('dataItemsCheckboxes');
+  <div class="site-row">
+    <div class="site-field">
+      <label for="siteSelect">Site</label>
+      <select id="siteSelect" disabled>
+        <option value="">Authenticate to load sites…</option>
+      </select>
+    </div>
+  </div>
+</div>
 
-            dataItems.forEach(item => {
-                const checkboxWrapper = document.createElement('div');
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = item;
-                checkbox.name = 'dataItems';
-                checkbox.value = item;
+<div class="form-wrapper" id="formWrapper">
+  <div class="form-content">
+    <!-- ACCESS TOKEN input removed. Token will be fetched via username/password prompts and stored in memory. -->
 
-                if (defaultSelectedItems.includes(item)) {
-                    checkbox.checked = true;
-                }
+    <div><label for="numColumns">Base Columns:</label><input type="number" id="numColumns" value="3" min="1"></div>
+    <div><label for="minPriceColor">Low Price Color:</label><input type="color" id="minPriceColor" value="#ffffff"></div>
+    <div><label for="maxPriceColor">High Price Color:</label><input type="color" id="maxPriceColor" value="#ffffff"></div>
+    <div><label for="minFontColor">Low Price Font Color:</label><input type="color" id="minFontColor" value="#333333"></div>
+    <div><label for="maxFontColor">High Price Font Color:</label><input type="color" id="maxFontColor" value="#ffffff"></div>
+    <div><label for="minFontSize">Min Font Size:</label><input type="number" id="minFontSize" value="8" min="1"></div>
+    <div><label for="maxFontSize">Max Font Size:</label><input type="number" id="maxFontSize" value="24" min="1"></div>
+    <div><label for="minTableWidth">Min Table Width:</label><input type="number" id="minTableWidth" value="6" min="1"></div>
+    <div><label for="maxTableWidth">Max Table Width:</label><input type="number" id="maxTableWidth" value="120" min="1"></div>
+    <div><label for="minPrice">Min Price/s:</label><input type="number" id="minPrice" value="0" min="0"></div>
+    <div><label for="maxPrice">Max Price/s:</label><input type="number" id="maxPrice" value="3" min="1"></div>
+    <div><label for="fallSpeed">Fall Speed (seconds):</label><input type="number" id="fallSpeed" value="6" min="1" step="0.1"></div>
+    <div><label for="fallLength">Fall Length (pixels):</label><input type="number" id="fallLength" value="500" min="100" step="10"></div>
+    <div><label for="minVideoSize">Min Video Size:</label><input type="number" id="minVideoSize" value="12" min="1"></div>
+    <div><label for="maxVideoSize">Max Video Size:</label><input type="number" id="maxVideoSize" value="48" min="1"></div>
 
-                const label = document.createElement('label');
-                label.htmlFor = item;
-                label.textContent = item;
+    <div>
+      <label for="circularMode">Circular Mode:</label>
+      <input type="checkbox" id="circularMode" checked>
+    </div>
+    <div>
+      <label>Select Data Items:</label>
+      <div id="dataItemsCheckboxes"></div>
+    </div>
+  </div>
+</div>
 
-                checkboxWrapper.appendChild(checkbox);
-                checkboxWrapper.appendChild(label);
-                checkboxContainer.appendChild(checkboxWrapper);
-            });
-        });
-		
-		let processingModeChanged = false;
+<div class="tables-wrapper" id="tablesWrapper"></div>
 
-		document.getElementById('circularMode').addEventListener('change', () => {
-		    const circularMode = document.getElementById('circularMode').checked;
+<script>
+  /**
+   * SECURITY NOTE (important):
+   * Doing a password-grant token request in browser JS exposes credentials to the page/runtime.
+   * If this is for internal/local use only, it can be acceptable; otherwise prefer a backend proxy.
+   */
 
-		    if (!circularMode) {
-		        // Reset UUIDs and timestamp
-		        processedUUIDs.clear();
-		        currentFetchTimestamp = Date.now();
-		        console.log("Circular Mode turned OFF. Reset processed UUIDs and timestamp.");
-		    } else {
-		        console.log("Circular Mode turned ON. All items will be processed.");
-		    }
+  const processedUUIDs = new Map();
+  const MAX_PROCESSED_UUIDS = 10000;
 
-		    // Set the mode change flag to interrupt current processing
-		    processingModeChanged = true;
-		});
+  // Token state (in-memory only)
+  let accessToken = null;
+  let tokenExpiresAtMs = 0;
+  let currentFetchTimestamp = 0;
+  let sitesByUuid = new Map();
+  let isFetching = false;
+  let stopRequested = false;
+  let fetchLoopId = 0; // increments each start; prevents old loops continuing
 
+  function getPublisherId() {
+    return document.getElementById("publisherIdAuth").value.trim();
+  }
 
-        function toggleForm() {
-            const formWrapper = document.getElementById('formWrapper');
-            const toggleButton = document.getElementById('toggleFormButton');
-            formWrapper.classList.toggle('hidden');
-            toggleButton.textContent = formWrapper.classList.contains('hidden') ? 'Show Config' : 'Hide Config';
+  function setTokenStatus(text) {
+    document.getElementById("tokenStatus").textContent = text;
+  }
+
+  function isTokenValid() {
+    return !!accessToken && Date.now() < (tokenExpiresAtMs - 10_000);
+  }
+
+  async function authenticateAndLoadSites() {
+    const publisherId = getPublisherId();
+    const username = document.getElementById("authUsername").value.trim();
+    const password = document.getElementById("authPassword").value;
+
+    if (!publisherId) { alert("Please enter Publisher ID."); throw new Error("Missing publisher_id"); }
+    if (!username || !password) { alert("Please enter username and password."); throw new Error("Missing credentials"); }
+
+    // 1) AUTH (POST)
+    const tokenUrl = "https://api.getpublica.com/v1/oauth/tokens";
+    const tokenBody = new URLSearchParams({
+      grant_type: "password",
+      username,
+      password,
+      reseller_id: "-1"
+    });
+
+    setTokenStatus("Token: authenticating...");
+
+    const tokenResp = await fetch(tokenUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: tokenBody.toString()
+    });
+
+    if (!tokenResp.ok) {
+      const t = await tokenResp.text().catch(() => "");
+      setTokenStatus(`Token: failed (${tokenResp.status})`);
+      throw new Error(`Auth failed: ${tokenResp.status} ${t}`);
+    }
+
+    const tokenJson = await tokenResp.json();
+    if (!tokenJson.access_token) {
+      setTokenStatus("Token: invalid response");
+      throw new Error("No access_token in response");
+    }
+
+    accessToken = tokenJson.access_token;
+    tokenExpiresAtMs = Date.now() + (Number(tokenJson.expires_in || 3600) * 1000);
+    setTokenStatus(`Token: OK (expires ${new Date(tokenExpiresAtMs).toLocaleString()})`);
+
+    // 2) LOAD SITES
+    await loadSitesDropdown();
+  }
+
+  async function loadSitesDropdown() {
+    const publisherId = getPublisherId();
+    const siteSelect = document.getElementById("siteSelect");
+
+    if (!isTokenValid()) throw new Error("Token missing/expired.");
+
+    siteSelect.disabled = true;
+    siteSelect.innerHTML = `<option value="">Loading sites...</option>`;
+
+    const url = `https://api.getpublica.com/v2/settings/sites?access_token=${encodeURIComponent(accessToken)}&publisher_id=${encodeURIComponent(publisherId)}&order_by=past_week_revenue&order_direction=desc`;
+    const resp = await fetch(url, { method: "GET" });
+
+    if (!resp.ok) {
+      const t = await resp.text().catch(() => "");
+      siteSelect.innerHTML = `<option value="">Failed to load sites</option>`;
+      throw new Error(`Sites fetch failed: ${resp.status} ${t}`);
+    }
+
+    const data = await resp.json();
+    const sites = Array.isArray(data?.sites) ? data.sites : [];
+
+    // cache + populate
+    sitesByUuid.clear();
+    siteSelect.innerHTML = `<option value="">Select a site...</option>`;
+
+    for (const s of sites) {
+      if (!s?.UUID || !s?.Name) continue;
+      sitesByUuid.set(s.UUID, { uuid: s.UUID, name: s.Name, id: s.ID });
+
+      const opt = document.createElement("option");
+      opt.value = s.UUID;       // VALUE is UUID
+      opt.textContent = s.Name; // LABEL is Name
+      siteSelect.appendChild(opt);
+    }
+
+    siteSelect.disabled = sites.length === 0;
+    if (sites.length === 0) {
+      siteSelect.innerHTML = `<option value="">No sites found</option>`;
+    }
+  }
+
+  document.getElementById("authButton").addEventListener("click", async () => {
+    try {
+      await authenticateAndLoadSites();
+      //alert("Authenticated + sites loaded!");
+    } catch (e) {
+      console.error(e);
+      //alert(e.message || "Authentication failed");
+    }
+  });
+  
+  document.getElementById("stopFetchButton").addEventListener("click", () => {
+    stopRequested = true;
+    isFetching = false;
+    fetchLoopId++; // invalidate any in-flight loop
+    console.log("Stop requested: fetch loop will halt.");
+  });
+  
+  document.addEventListener("DOMContentLoaded", function() {
+    const dataItems = ['DemandSource', 'BidderName', 'Category', 'AdDuration', 'Price', 'CpmPerSecond', 'IsBidSaver', 'Adomain', 'MediaFileURLs', 'Favicon'];
+    const defaultSelectedItems = ['MediaFileURLs'];
+    const checkboxContainer = document.getElementById('dataItemsCheckboxes');
+
+    dataItems.forEach(item => {
+      const checkboxWrapper = document.createElement('div');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = item;
+      checkbox.name = 'dataItems';
+      checkbox.value = item;
+
+      if (defaultSelectedItems.includes(item)) checkbox.checked = true;
+
+      const label = document.createElement('label');
+      label.htmlFor = item;
+      label.textContent = item;
+
+      checkboxWrapper.appendChild(checkbox);
+      checkboxWrapper.appendChild(label);
+      checkboxContainer.appendChild(checkboxWrapper);
+    });
+  });
+
+  let processingModeChanged = false;
+
+  document.getElementById('circularMode').addEventListener('change', () => {
+    const circularMode = document.getElementById('circularMode').checked;
+
+    if (!circularMode) {
+      processedUUIDs.clear();
+      currentFetchTimestamp = Date.now();
+      console.log("Circular Mode turned OFF. Reset processed UUIDs and timestamp.");
+    } else {
+      console.log("Circular Mode turned ON. All items will be processed.");
+    }
+
+    processingModeChanged = true;
+  });
+
+  function toggleForm() {
+      const formWrapper = document.getElementById('formWrapper');
+      const authWrapper = document.getElementById('authWrapper');
+      const toggleButton = document.getElementById('toggleFormButton');
+
+      const willHide = !formWrapper.classList.contains('hidden');
+
+      formWrapper.classList.toggle('hidden');
+      if (authWrapper) authWrapper.style.display = willHide ? 'none' : 'block';
+
+      toggleButton.textContent = willHide ? 'Show Config' : 'Hide Config';
+    }
+
+  function getSelectedDataItems() {
+    return Array.from(document.querySelectorAll('input[name="dataItems"]:checked'))
+      .map(checkbox => checkbox.value);
+  }
+
+  function initializeColumns() {
+    const tablesWrapper = document.getElementById('tablesWrapper');
+    tablesWrapper.innerHTML = '';
+
+    const numColumns = parseInt(document.getElementById('numColumns').value, 10) || 3;
+
+    for (let i = 1; i <= numColumns; i++) {
+      const baseTable = document.createElement('div');
+      baseTable.id = `baseTable${i}`;
+      baseTable.classList.add('base-table');
+      tablesWrapper.appendChild(baseTable);
+    }
+  }
+
+  async function fetchLiveLogs(loopId) {
+    // stop / stale loop guard
+    if (stopRequested || !isFetching || loopId !== fetchLoopId) {
+      console.log("Fetch loop stopped.");
+      const stopBtn = document.getElementById("stopFetchButton");
+      if (stopBtn) stopBtn.disabled = true;
+      return;
+    }
+
+    const publisherId = getPublisherId();
+    const siteUuid = getSelectedSiteUuid();
+
+    if (!publisherId || !siteUuid) {
+      alert("Please select a Site (authenticate first).");
+      return;
+    }
+
+    const url = `https://api.getpublica.com/v1/settings/live_logs?access_token=${encodeURIComponent(accessToken)}&publisher_id=${encodeURIComponent(publisherId)}`;
+    const payload = { type: 3028, site_uuid: siteUuid };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          alert("Token Expired / Unauthorized. Please Authenticate again.");
+          accessToken = null;
+          tokenExpiresAtMs = 0;
+          setTokenStatus("Token: (not authenticated)");
+          isFetching = false;
+          stopRequested = true;
+          const stopBtn = document.getElementById("stopFetchButton");
+          if (stopBtn) stopBtn.disabled = true;
+          return;
         }
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
 
-        function getSelectedDataItems() {
-            return Array.from(document.querySelectorAll('input[name="dataItems"]:checked'))
-                        .map(checkbox => checkbox.value);
+      const data = await response.json();
+
+      // Process logs (will also stop early if stop requested)
+      await processLiveLogs(data, loopId);
+
+      // Schedule next poll only if still running
+      if (!stopRequested && isFetching && loopId === fetchLoopId) {
+        fetchLiveLogs(loopId);
+      } else {
+        console.log("Fetch loop stopped after processing.");
+        const stopBtn = document.getElementById("stopFetchButton");
+        if (stopBtn) stopBtn.disabled = true;
+      }
+    } catch (err) {
+      console.error("Error occurred:", err);
+      // stop on error (optional)
+      isFetching = false;
+      stopRequested = true;
+      const stopBtn = document.getElementById("stopFetchButton");
+      if (stopBtn) stopBtn.disabled = true;
+    }
+  }
+
+  function getSelectedSiteUuid() {
+    return document.getElementById("siteSelect").value;
+  }
+
+  document.getElementById("fetchDataButton").addEventListener("click", async () => {
+    if (!isTokenValid()) {
+      alert("Please Authenticate first (token missing or expired).");
+      return;
+    }
+
+    const publisherId = getPublisherId();
+    const siteUuid = getSelectedSiteUuid();
+
+    if (!publisherId) { alert("Missing Publisher ID."); return; }
+    if (!siteUuid) { alert("Please select a Site."); return; }
+
+    stopRequested = false;
+    isFetching = true;
+    const myLoopId = ++fetchLoopId;
+
+    currentFetchTimestamp = Date.now();
+    initializeColumns();
+
+    // (Optional) enable stop button
+    const stopBtn = document.getElementById("stopFetchButton");
+    if (stopBtn) stopBtn.disabled = false;
+
+    await fetchLiveLogs(myLoopId);
+  });
+
+  async function processLiveLogs(dataArray, loopId) {
+    const minDelay = 800;
+    const maxDelay = 1300;
+    const circularMode = document.getElementById('circularMode').checked;
+
+    processingModeChanged = false;
+
+    const totalItems = dataArray.length;
+    let processedCount = 0;
+
+    for (const item of dataArray) {
+      if (stopRequested || !isFetching || loopId !== fetchLoopId) {
+        console.log("Processing stopped.");
+        return;
+      }
+      if (processingModeChanged) {
+        console.log("Processing interrupted due to mode change.");
+        return;
+      }
+
+      const endpointUUID = item.endpointUUID;
+      const itemTimestamp = new Date(item.timestamp).getTime();
+
+      if (!circularMode) {
+        if (processedUUIDs.has(endpointUUID)) continue;
+        if (itemTimestamp < currentFetchTimestamp) continue;
+
+        if (processedUUIDs.size >= MAX_PROCESSED_UUIDS) {
+          const oldestUUID = processedUUIDs.keys().next().value;
+          processedUUIDs.delete(oldestUUID);
         }
+        processedUUIDs.set(endpointUUID, Date.now());
+      }
 
-        function initializeColumns() {
-            const tablesWrapper = document.getElementById('tablesWrapper');
-            tablesWrapper.innerHTML = '';
-
-            const numColumns = parseInt(document.getElementById('numColumns').value, 10) || 3;
-
-            for (let i = 1; i <= numColumns; i++) {
-                const baseTable = document.createElement('div');
-                baseTable.id = `baseTable${i}`;
-                baseTable.classList.add('base-table');
-                tablesWrapper.appendChild(baseTable);
-            }
+      if (item.EndpointResponseAds && Array.isArray(item.EndpointResponseAds)) {
+        for (const ad of item.EndpointResponseAds) {
+          if (stopRequested || !isFetching || loopId !== fetchLoopId) {
+            console.log("Processing stopped (inside ads loop).");
+            return;
+          }
+          const delay = Math.floor(Math.random() * (maxDelay - minDelay)) + minDelay;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          addInnerTable(ad);
         }
+      }
 
-        async function fetchLiveLogs() {
-            const accessToken = document.getElementById('accessToken').value;
-            const publisherId = document.getElementById('publisherId').value;
-            const siteUuid = document.getElementById('siteUuid').value;
+      processedCount++;
+      const progressPercentage = ((processedCount / totalItems) * 100).toFixed(2);
+      console.log(`Processed ${processedCount}/${totalItems} (${progressPercentage}%)`);
+    }
+  }
 
-            const url = `https://api.getpublica.com/v1/settings/live_logs?access_token=${accessToken}&publisher_id=${publisherId}`;
-            const payload = { type: 3028, site_uuid: siteUuid };
+  function addInnerTable(ad) {
+    const fallSpeed = parseFloat(document.getElementById('fallSpeed').value) || 6;
+    const fallLength = parseInt(document.getElementById('fallLength').value, 10) || 500;
+    const minFontSize = parseInt(document.getElementById('minFontSize').value, 10) || 12;
+    const maxFontSize = parseInt(document.getElementById('maxFontSize').value, 10) || 24;
+    const minVideoSize = parseInt(document.getElementById('minVideoSize').value, 10) || 12;
+    const maxVideoSize = parseInt(document.getElementById('maxVideoSize').value, 10) || 36;
+    const minTableWidth = parseInt(document.getElementById('minTableWidth').value, 10) || 6;
+    const maxTableWidth = parseInt(document.getElementById('maxTableWidth').value, 10) || 120;
+    const minPrice = parseInt(document.getElementById('minPrice').value, 10) || 0;
+    const maxPrice = parseInt(document.getElementById('maxPrice').value, 10) || 50;
+    const numColumns = parseInt(document.getElementById('numColumns').value, 10) || 3;
 
-            const options = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            };
+    const baseTableId = `baseTable${Math.floor(Math.random() * numColumns) + 1}`;
+    const baseTable = document.getElementById(baseTableId);
 
-            try {
-                const response = await fetch(url, options);
-				if (!response.ok) {
-				            if (response.status === 401) {
-				                alert("Token Expired"); // Show a popup if the token is expired
-				            }
-				            throw new Error(response.statusText);
-				}
+    const price = parseFloat(ad.CpmPerSecond) || 0;
+    const duration = parseFloat(ad.AdDuration) || 0;
 
-                const data = await response.json();
-                await processLiveLogs(data);
-                fetchLiveLogs();
-            } catch (error) {
-                console.error('Error occurred:', error);
-            }
+    const fontSize = Math.min(
+      Math.max(((price - minPrice) / (maxPrice - minPrice)) * (maxFontSize - minFontSize) + minFontSize, minFontSize),
+      maxFontSize
+    );
+    const videoSize = Math.min(
+      Math.max(((price - minPrice) / (maxPrice - minPrice)) * (maxVideoSize - minVideoSize) + minVideoSize, minVideoSize),
+      maxVideoSize
+    );
+    const tableWidth = Math.min(Math.max(duration, minTableWidth), maxTableWidth);
+
+    const minPriceColor = hexToRgb(document.getElementById('minPriceColor').value);
+    const maxPriceColor = hexToRgb(document.getElementById('maxPriceColor').value);
+    const backgroundColor = interpolateColor(minPriceColor, maxPriceColor, (price - minPrice) / (maxPrice - minPrice));
+
+    const minFontColor = hexToRgb(document.getElementById('minFontColor').value);
+    const maxFontColor = hexToRgb(document.getElementById('maxFontColor').value);
+    const fontColor = interpolateColor(minFontColor, maxFontColor, (price - minPrice) / (maxPrice - minPrice));
+
+    const innerTableContainer = document.createElement('div');
+    innerTableContainer.classList.add('inner-table-container', 'falling');
+    innerTableContainer.style.width = tableWidth + "px";
+    innerTableContainer.style.animationDuration = `${fallSpeed}s`;
+
+    const keyframes = `@keyframes customSlideDown {
+      from { transform: translateY(0); }
+      to { transform: translateY(${fallLength}px); }
+    }`;
+
+    const styleSheet = document.styleSheets[0];
+    styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+    innerTableContainer.style.animationName = 'customSlideDown';
+
+    const innerTable = document.createElement('table');
+    innerTable.classList.add('inner-table');
+    innerTable.style.borderRadius = "8px";
+
+    const newRow = document.createElement('tr');
+    const selectedDataItems = getSelectedDataItems();
+
+    selectedDataItems.forEach(item => {
+      if (item === 'MediaFileURLs') return;
+
+      const cell = document.createElement('td');
+      cell.style.fontSize = fontSize + 'px';
+      cell.style.backgroundColor = backgroundColor;
+      cell.style.color = fontColor;
+
+      if (item === 'Adomain') {
+        const domain = ad['Adomain'] || 'N/A';
+        if (selectedDataItems.includes('Favicon')) {
+          const faviconUrl = `https://${domain}/favicon.ico`;
+          const faviconImage = new Image();
+          faviconImage.src = faviconUrl;
+          faviconImage.alt = `${domain} logo`;
+
+          const faviconSize = Math.round(parseInt(cell.style.fontSize) * 0.8);
+          faviconImage.style.width = `${faviconSize}px`;
+          faviconImage.style.height = `${faviconSize}px`;
+          faviconImage.style.marginRight = '5px';
+
+          faviconImage.onload = () => {
+            cell.prepend(faviconImage);
+          };
         }
+        cell.appendChild(document.createTextNode(domain));
+      } else if (item !== 'Favicon') {
+        cell.textContent = ad[item] || 'N/A';
+      }
 
-		let currentFetchTimestamp = 0; // Global variable to store the current timestamp
+      newRow.appendChild(cell);
+    });
 
-		document.querySelector('button[onclick*="fetchLiveLogs"]').addEventListener('click', () => {
-		    currentFetchTimestamp = Date.now(); // Capture the timestamp when Fetch Data is clicked
-		    console.log(`Current Fetch Timestamp: ${currentFetchTimestamp}`);
-		});
-		
-		async function processLiveLogs(dataArray) {
-		    const minDelay = 800;
-		    const maxDelay = 1300;
-		    const circularMode = document.getElementById('circularMode').checked;
+    if (selectedDataItems.includes('MediaFileURLs') && ad.MediaFileURLs && ad.MediaFileURLs.length > 0) {
+      const videoRow = document.createElement('tr');
+      const videoCell = document.createElement('td');
+      videoCell.colSpan = selectedDataItems.length;
 
-		    processingModeChanged = false; // Reset the flag
-		    window.currentDataArray = dataArray; // Store the current data globally
+      const videoElement = document.createElement('video');
+      videoElement.src = ad.MediaFileURLs[0];
+      videoElement.autoplay = true;
+      videoElement.muted = true;
+      videoElement.loop = true;
+      videoElement.style.width = `${videoSize * 10}px`;
+      videoElement.style.height = "auto";
+      videoElement.style.borderRadius = "8px";
 
-		    const totalItems = dataArray.length;
-		    let processedCount = 0;
+      videoCell.appendChild(videoElement);
+      videoRow.appendChild(videoCell);
+      innerTable.appendChild(videoRow);
+    }
 
-		    for (const item of dataArray) {
-		        // If mode changed mid-processing, stop the loop
-		        if (processingModeChanged) {
-		            console.log("Processing interrupted due to mode change.");
-		            return;
-		        }
+    innerTable.appendChild(newRow);
+    innerTableContainer.appendChild(innerTable);
+    baseTable.appendChild(innerTableContainer);
 
-		        const endpointUUID = item.endpointUUID;
-		        const itemTimestamp = new Date(item.timestamp).getTime();
+    setTimeout(() => innerTableContainer.classList.add('visible'), 1);
 
-		        // Skip duplicates and old data when Circular Mode is OFF
-		        if (!circularMode) {
-		            if (processedUUIDs.has(endpointUUID)) {
-		                console.log(`Skipping ${endpointUUID}: Already processed.`);
-		                continue;
-		            }
-		            if (itemTimestamp < currentFetchTimestamp) {
-		                console.log(`Skipping ${itemTimestamp}: Too old.`);
-		                continue;
-		            }
+    innerTableContainer.addEventListener('animationend', () => {
+      innerTableContainer.remove();
+    });
+  }
 
-		            // Add UUID to processed list
-		            if (processedUUIDs.size >= MAX_PROCESSED_UUIDS) {
-		                const oldestUUID = processedUUIDs.keys().next().value;
-		                processedUUIDs.delete(oldestUUID);
-		            }
-		            processedUUIDs.set(endpointUUID, Date.now());
-		        }
+  function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
 
-		        // Process Ads
-		        if (item.EndpointResponseAds && Array.isArray(item.EndpointResponseAds)) {
-		            for (const ad of item.EndpointResponseAds) {
-		                const delay = Math.floor(Math.random() * (maxDelay - minDelay)) + minDelay;
-		                await new Promise((resolve) => setTimeout(resolve, delay));
-		                addInnerTable(ad);
-		            }
-		        }
+  function interpolateColor(color1, color2, factor) {
+    const safe = isFinite(factor) ? Math.min(1, Math.max(0, factor)) : 0;
+    const r = Math.round(color1.r + (color2.r - color1.r) * safe);
+    const g = Math.round(color1.g + (color2.g - color1.g) * safe);
+    const b = Math.round(color1.b + (color2.b - color1.b) * safe);
+    return `rgb(${r}, ${g}, ${b})`;
+  }
 
-		        processedCount++;
-		        const progressPercentage = ((processedCount / totalItems) * 100).toFixed(2);
-		        console.log(`Processed ${processedCount}/${totalItems} (${progressPercentage}%)`);
-		    }
-
-		    console.log("Processing completed.");
-		}
-
-
-		function addInnerTable(ad) {
-		    const fallSpeed = parseFloat(document.getElementById('fallSpeed').value) || 6; // Default to 6 seconds if no input
-		    const fallLength = parseInt(document.getElementById('fallLength').value, 10) || 500; // Default to 500 pixels if no input
-		    const minFontSize = parseInt(document.getElementById('minFontSize').value, 10) || 12;
-		    const maxFontSize = parseInt(document.getElementById('maxFontSize').value, 10) || 24;
-		    const minVideoSize = parseInt(document.getElementById('minVideoSize').value, 10) || 12;
-		    const maxVideoSize = parseInt(document.getElementById('maxVideoSize').value, 10) || 36;
-		    const minTableWidth = parseInt(document.getElementById('minTableWidth').value, 10) || 6;
-		    const maxTableWidth = parseInt(document.getElementById('maxTableWidth').value, 10) || 120;
-		    const minPrice = parseInt(document.getElementById('minPrice').value, 10) || 0;
-		    const maxPrice = parseInt(document.getElementById('maxPrice').value, 10) || 50;
-		    const numColumns = parseInt(document.getElementById('numColumns').value, 10) || 3;
-
-		    const baseTableId = `baseTable${Math.floor(Math.random() * numColumns) + 1}`;
-		    const baseTable = document.getElementById(baseTableId);
-
-		    const price = parseFloat(ad.CpmPerSecond) || 0;
-		    const duration = parseFloat(ad.AdDuration) || 0;
-
-		    const fontSize = Math.min(Math.max(((price - minPrice) / (maxPrice - minPrice)) * (maxFontSize - minFontSize) + minFontSize, minFontSize), maxFontSize);
-		    const videoSize = Math.min(Math.max(((price - minPrice) / (maxPrice - minPrice)) * (maxVideoSize - minVideoSize) + minVideoSize, minVideoSize), maxVideoSize);
-		    const tableWidth = Math.min(Math.max(duration, minTableWidth), maxTableWidth);
-
-		    const minPriceColor = hexToRgb(document.getElementById('minPriceColor').value);
-		    const maxPriceColor = hexToRgb(document.getElementById('maxPriceColor').value);
-		    const backgroundColor = interpolateColor(minPriceColor, maxPriceColor, (price - minPrice) / (maxPrice - minPrice));
-
-		    const minFontColor = hexToRgb(document.getElementById('minFontColor').value);
-		    const maxFontColor = hexToRgb(document.getElementById('maxFontColor').value);
-		    const fontColor = interpolateColor(minFontColor, maxFontColor, (price - minPrice) / (maxPrice - minPrice));
-
-		    const innerTableContainer = document.createElement('div');
-		    innerTableContainer.classList.add('inner-table-container', 'falling');
-		    innerTableContainer.style.width = tableWidth + "px";
-		    innerTableContainer.style.animationDuration = `${fallSpeed}s`; // Apply fall speed as animation duration
-
-		    // Define custom keyframes for each element's fall length
-		    const keyframes = `@keyframes customSlideDown {
-		        from { transform: translateY(0); }
-		        to { transform: translateY(${fallLength}px); }
-		    }`;
-
-		    // Append custom keyframes to the document's styles
-		    const styleSheet = document.styleSheets[0];
-		    styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
-
-		    // Assign custom animation name
-		    innerTableContainer.style.animationName = 'customSlideDown';
-
-		    const innerTable = document.createElement('table');
-		    innerTable.classList.add('inner-table');
-		    innerTable.style.borderRadius = "8px"; // Rounded corners for inner table
-		    const newRow = document.createElement('tr');
-
-		    const selectedDataItems = getSelectedDataItems();
-
-			selectedDataItems.forEach(item => {
-			    if (item === 'MediaFileURLs') return; // Skip adding MediaFileURLs as text
-
-			    const cell = document.createElement('td');
-			    cell.style.fontSize = fontSize + 'px';
-			    cell.style.backgroundColor = backgroundColor;
-			    cell.style.color = fontColor;
-
-			    if (item === 'Adomain') {
-			        const domain = ad['Adomain'] || 'N/A';
-			        if (selectedDataItems.includes('Favicon')) {
-			            const faviconUrl = `https://${domain}/favicon.ico`;
-			            const faviconImage = new Image();
-			            faviconImage.src = faviconUrl;
-			            faviconImage.alt = `${domain} logo`;
-
-			            // Adjust favicon size based on the font size
-			            const faviconSize = Math.round(parseInt(cell.style.fontSize) * 0.8); // 80% of the font size
-			            faviconImage.style.width = `${faviconSize}px`;
-			            faviconImage.style.height = `${faviconSize}px`;
-			            faviconImage.style.marginRight = '5px';
-
-			            // Preload the favicon to ensure it exists before displaying
-			            faviconImage.onload = () => {
-			                cell.prepend(faviconImage); // Place favicon before domain text if it loads successfully
-			            };
-			        }
-			        cell.appendChild(document.createTextNode(domain));
-			    } else if (item !== 'Favicon') {
-			        cell.textContent = ad[item] || 'N/A';
-			    }
-
-			    newRow.appendChild(cell);
-			});
-
-		    // Check if MediaFileURLs is selected and exists, then embed the first video with dynamic size
-		    if (selectedDataItems.includes('MediaFileURLs') && ad.MediaFileURLs && ad.MediaFileURLs.length > 0) {
-		        const videoRow = document.createElement('tr');
-		        const videoCell = document.createElement('td');
-		        videoCell.colSpan = selectedDataItems.length; // Span across all columns
-
-		        const videoElement = document.createElement('video');
-		        videoElement.src = ad.MediaFileURLs[0]; // Use the first URL in MediaFileURLs
-		        videoElement.autoplay = true;
-		        videoElement.muted = true;
-		        videoElement.loop = true;
-		        videoElement.style.width = `${videoSize * 10}px`; // Set video width dynamically based on Price
-		        videoElement.style.height = "auto"; // Adjust height proportionally
-		        videoElement.style.borderRadius = "8px"; // Rounded corners for video
-
-		        videoCell.appendChild(videoElement);
-		        videoRow.appendChild(videoCell);
-		        innerTable.appendChild(videoRow);
-		    }
-
-		    innerTable.appendChild(newRow);
-		    innerTableContainer.appendChild(innerTable);
-		    baseTable.appendChild(innerTableContainer);
-
-		    setTimeout(() => innerTableContainer.classList.add('visible'), 10);
-
-		    innerTableContainer.addEventListener('animationend', () => {
-		        innerTableContainer.remove();
-		    });
-		}
-		
-        function hexToRgb(hex) {
-            const bigint = parseInt(hex.slice(1), 16);
-            const r = (bigint >> 16) & 255;
-            const g = (bigint >> 8) & 255;
-            const b = bigint & 255;
-            return { r, g, b };
-        }
-
-        function interpolateColor(color1, color2, factor) {
-            const r = Math.round(color1.r + (color2.r - color1.r) * factor);
-            const g = Math.round(color1.g + (color2.g - color1.g) * factor);
-            const b = Math.round(color1.b + (color2.b - color1.b) * factor);
-            return `rgb(${r}, ${g}, ${b})`;
-        }
-
-        initializeColumns();
-        fetchLiveLogs();
-    </script>
+  // Initial UI setup only
+  initializeColumns();
+</script>
 </body>
 </html>
-
-
-
-
